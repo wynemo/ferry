@@ -195,7 +195,7 @@
 </template>
 
 <script>
-import { getCodeImg } from "@/api/login";
+import { getCodeImg, getSMS } from "@/api/login";
 import moment from "moment";
 import { mapGetters } from "vuex";
 
@@ -385,7 +385,13 @@ export default {
           this.smsSending = false;
         }
       }, 1000);
-      this.$message.success("验证码已发送");
+      getSMS(this.smsForm.phone)
+        .then(() => {
+          this.$message.success("验证码已发送");
+        })
+        .finally(() => {
+          this.smsLoading = false;
+        });
     },
   },
 };
