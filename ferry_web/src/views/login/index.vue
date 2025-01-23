@@ -29,120 +29,165 @@
       <div class="login-border">
         <div class="login-main">
           <div class="login-title">用户登录</div>
-          <el-form
-            ref="loginForm"
-            :model="loginForm"
-            :rules="loginRules"
-            class="login-form"
-            autocomplete="on"
-            label-position="left"
-          >
-            <el-form-item prop="username">
-              <span class="svg-container">
-                <i class="el-icon-user" />
-              </span>
-              <el-input
-                ref="username"
-                v-model="loginForm.username"
-                placeholder="用户名"
-                name="username"
-                type="text"
-                tabindex="1"
+          <el-tabs v-model="activeTab">
+            <el-tab-pane label="用户名密码登录" name="passwordLogin">
+              <el-form
+                ref="loginForm"
+                :model="loginForm"
+                :rules="loginRules"
+                class="login-form"
                 autocomplete="on"
-              />
-            </el-form-item>
-
-            <el-tooltip
-              v-model="capsTooltip"
-              content="Caps lock is On"
-              placement="right"
-              manual
-            >
-              <el-form-item prop="password">
-                <span class="svg-container">
-                  <svg-icon icon-class="password" />
-                </span>
-                <el-input
-                  :key="passwordType"
-                  ref="password"
-                  v-model="loginForm.password"
-                  :type="passwordType"
-                  placeholder="密码"
-                  name="password"
-                  tabindex="2"
-                  autocomplete="on"
-                  @keyup.native="checkCapslock"
-                  @blur="capsTooltip = false"
-                  @keyup.enter.native="handleLogin"
-                />
-                <span class="show-pwd" @click="showPwd">
-                  <svg-icon
-                    :icon-class="
-                      passwordType === 'password' ? 'eye' : 'eye-open'
-                    "
+                label-position="left"
+              >
+                <el-form-item prop="username">
+                  <span class="svg-container">
+                    <i class="el-icon-user" />
+                  </span>
+                  <el-input
+                    ref="username"
+                    v-model="loginForm.username"
+                    placeholder="用户名"
+                    name="username"
+                    type="text"
+                    tabindex="1"
+                    autocomplete="on"
                   />
-                </span>
-              </el-form-item>
-            </el-tooltip>
-            <template v-if="isVerifyCodeTmp">
-              <el-form-item
-                prop="code"
-                style="width: 66%; float: left; margin-bottom: 13px"
+                </el-form-item>
+
+                <el-tooltip
+                  v-model="capsTooltip"
+                  content="Caps lock is On"
+                  placement="right"
+                  manual
+                >
+                  <el-form-item prop="password">
+                    <span class="svg-container">
+                      <svg-icon icon-class="password" />
+                    </span>
+                    <el-input
+                      :key="passwordType"
+                      ref="password"
+                      v-model="loginForm.password"
+                      :type="passwordType"
+                      placeholder="密码"
+                      name="password"
+                      tabindex="2"
+                      autocomplete="on"
+                      @keyup.native="checkCapslock"
+                      @blur="capsTooltip = false"
+                      @keyup.enter.native="handleLogin"
+                    />
+                    <span class="show-pwd" @click="showPwd">
+                      <svg-icon
+                        :icon-class="
+                          passwordType === 'password' ? 'eye' : 'eye-open'
+                        "
+                      />
+                    </span>
+                  </el-form-item>
+                </el-tooltip>
+                <template v-if="isVerifyCodeTmp">
+                  <el-form-item
+                    prop="code"
+                    style="width: 66%; float: left; margin-bottom: 13px"
+                  >
+                    <span class="svg-container">
+                      <svg-icon icon-class="validCode" />
+                    </span>
+                    <el-input
+                      ref="username"
+                      v-model="loginForm.code"
+                      placeholder="验证码"
+                      name="username"
+                      type="text"
+                      tabindex="3"
+                      maxlength="5"
+                      autocomplete="off"
+                      style="width: 75%"
+                      @keyup.enter.native="handleLogin"
+                    />
+                  </el-form-item>
+                  <div
+                    class="login-code"
+                    style="
+                      cursor: pointer;
+                      width: 30%;
+                      height: 48px;
+                      float: right;
+                      background-color: #f0f1f5;
+                    "
+                  >
+                    <img
+                      style="
+                        height: 48px;
+                        width: 100%;
+                        border: 1px solid rgba(0, 0, 0, 0.1);
+                        border-radius: 5px;
+                      "
+                      :src="codeUrl"
+                      @click="getCode"
+                    />
+                  </div>
+                </template>
+                <div
+                  prop="code"
+                  style="width: 100%; float: left; margin-bottom: 13px"
+                >
+                  <el-checkbox v-model="isLdapTmp">LDAP登陆</el-checkbox>
+                </div>
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="短信登录" name="smsLogin">
+              <el-form
+                ref="smsForm"
+                :model="smsForm"
+                :rules="smsRules"
+                class="login-form"
               >
-                <span class="svg-container">
-                  <svg-icon icon-class="validCode" />
-                </span>
-                <el-input
-                  ref="username"
-                  v-model="loginForm.code"
-                  placeholder="验证码"
-                  name="username"
-                  type="text"
-                  tabindex="3"
-                  maxlength="5"
-                  autocomplete="off"
-                  style="width: 75%"
-                  @keyup.enter.native="handleLogin"
-                />
-              </el-form-item>
-              <div
-                class="login-code"
-                style="
-                  cursor: pointer;
-                  width: 30%;
-                  height: 48px;
-                  float: right;
-                  background-color: #f0f1f5;
-                "
-              >
-                <img
-                  style="
-                    height: 48px;
-                    width: 100%;
-                    border: 1px solid rgba(0, 0, 0, 0.1);
-                    border-radius: 5px;
-                  "
-                  :src="codeUrl"
-                  @click="getCode"
-                />
-              </div>
-            </template>
-            <div
-              prop="code"
-              style="width: 100%; float: left; margin-bottom: 13px"
-            >
-              <el-checkbox v-model="isLdapTmp">LDAP登陆</el-checkbox>
-            </div>
-            <el-button
-              :loading="loading"
-              type="primary"
-              style="width: 100%; padding: 12px 20px; margin-bottom: 30px"
-              @click.native.prevent="handleLogin"
-            >
-              <span v-if="!loading">登 录</span>
-              <span v-else>登 录 中...</span>
-            </el-button>
-          </el-form>
+                <el-form-item prop="phone">
+                  <span class="svg-container">
+                    <i class="el-icon-phone" />
+                  </span>
+                  <el-input
+                    v-model="smsForm.phone"
+                    placeholder="手机号"
+                    maxlength="11"
+                    autocomplete="off"
+                  />
+                </el-form-item>
+
+                <el-form-item
+                  prop="smsCode"
+                  style="display: flex; align-items: center"
+                >
+                  <span class="svg-container">
+                    <i class="el-icon-message" />
+                  </span>
+                  <el-input
+                    v-model="smsForm.smsCode"
+                    placeholder="验证码"
+                    maxlength="6"
+                    style="flex: 1; margin-right: 10px"
+                  />
+                  <el-button
+                    :disabled="smsSending || smsCountdown > 0"
+                    @click="getSmsCode"
+                  >
+                    {{ smsCountdown > 0 ? `${smsCountdown}s` : "获取验证码" }}
+                  </el-button>
+                </el-form-item>
+              </el-form>
+            </el-tab-pane>
+          </el-tabs>
+          <el-button
+            :loading="loading"
+            type="primary"
+            style="width: 100%; padding: 12px 20px; margin-bottom: 30px"
+            @click.native.prevent="handleLogin"
+          >
+            <span v-if="!loading">登 录</span>
+            <span v-else>登 录 中...</span>
+          </el-button>
         </div>
       </div>
     </div>
@@ -158,6 +203,7 @@ export default {
   name: "LoginIndex",
   data() {
     return {
+      activeTab: "passwordLogin",
       isLdapTmp: false,
       codeUrl: "",
       cookiePassword: "",
@@ -169,6 +215,10 @@ export default {
         uuid: "",
         loginType: 1,
       },
+      smsForm: {
+        phone: "",
+        smsCode: "",
+      },
       loginRules: {
         username: [
           { required: true, trigger: "blur", message: "用户名不能为空" },
@@ -179,6 +229,10 @@ export default {
         code: [
           { required: true, trigger: "change", message: "验证码不能为空" },
         ],
+      },
+      smsRules: {
+        phone: [{ required: true, message: "请输入手机号", trigger: "blur" }],
+        smsCode: [{ required: true, message: "请输入验证码", trigger: "blur" }],
       },
       passwordType: "password",
       capsTooltip: false,
@@ -271,7 +325,11 @@ export default {
       });
     },
     handleLogin() {
-      this.$refs.loginForm.validate((valid) => {
+      const form =
+        this.activeTab === "passwordLogin" ? this.loginForm : this.smsForm;
+      this.$refs[
+        this.activeTab === "passwordLogin" ? "loginForm" : "smsForm"
+      ].validate((valid) => {
         if (valid) {
           if (this.isLdapTmp) {
             this.loginForm.loginType = 1;
@@ -280,8 +338,13 @@ export default {
           }
 
           this.loading = true;
+          const loginData =
+            this.activeTab === "passwordLogin"
+              ? this.loginForm
+              : { username: form.phone, password: form.smsCode, loginType: 2 };
+
           this.$store
-            .dispatch("user/login", this.loginForm)
+            .dispatch("user/login", loginData)
             .then(() => {
               // this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.$router.push({ path: "/" });
@@ -303,6 +366,26 @@ export default {
         }
         return acc;
       }, {});
+    },
+    togglePasswordType() {
+      this.passwordType =
+        this.passwordType === "password" ? "text" : "password";
+    },
+    getSmsCode() {
+      if (!this.smsForm.phone) {
+        this.$message.error("请输入手机号");
+        return;
+      }
+      this.smsSending = true;
+      this.smsCountdown = 60;
+      const timer = setInterval(() => {
+        this.smsCountdown -= 1;
+        if (this.smsCountdown <= 0) {
+          clearInterval(timer);
+          this.smsSending = false;
+        }
+      }, 1000);
+      this.$message.success("验证码已发送");
     },
   },
 };
