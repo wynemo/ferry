@@ -6,7 +6,8 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/re
 RUN apk update && \
     apk add --no-cache git make gcc g++ python3 && \
     rm -rf /var/cache/apk/* /tmp/* /var/tmp/* $HOME/.cache
-RUN git clone https://github.com/lanyulei/ferry_web
+# RUN git clone https://github.com/lanyulei/ferry_web
+COPY ferry_web ferry_web
 
 WORKDIR ferry_web
 RUN npm install -g pnpm --registry=https://registry.npmmirror.com
