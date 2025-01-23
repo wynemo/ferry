@@ -3,7 +3,7 @@
 
 用docker compose up -d 启动服务
 
-
+启动以后需要往数据库插入数据:
 docker exec -i ferry_mysql mysql -uferry -p123456 ferry < config/db.sql
 docker exec -i ferry_mysql mysql -uferry -p123456 ferry < config/ferry.sql
 
