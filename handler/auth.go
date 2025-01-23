@@ -8,6 +8,7 @@ import (
 	ldap1 "ferry/pkg/ldap"
 	"ferry/pkg/logger"
 	"ferry/pkg/settings"
+	"ferry/pkg/sms"
 	"ferry/tools"
 	"fmt"
 	"net/http"
@@ -93,7 +94,7 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 	}
 	loginLog.Username = loginVal.Username
 
-	if loginVal.LoginType > 1 {
+	if loginVal.LoginType > 2 {
 		return nil, errors.New("unsupported login type")
 	}
 
@@ -150,6 +151,42 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 				return nil, errors.New(fmt.Sprintf("创建本地用户失败，%v", err))
 			}
 		}
+	}
+
+	// sms 验证
+	if loginVal.LoginType == 2 {
+		val, err := sms.CheckSMSCode(loginVal.Username, loginVal.Password)
+		if err != nil || val == false {
+			return nil, errors.New("验证码错误")
+		}
+
+		err = orm.Eloquent.Model(&system.SysUser{}).
+			Where("username = ?", loginVal.Username).
+			Count(&authUserCount).Error
+		if err != nil {
+			return nil, errors.New(fmt.Sprintf("查询用户失败，%v", err))
+		}
+
+		if authUserCount == 0 {
+			addUserInfo.Username = loginVal.Username
+			// 获取默认权限ID
+			err = orm.Eloquent.Model(&system.SysRole{}).Where("role_key = 'common'").Find(&roleValue).Error
+			if err != nil {
+				return nil, errors.New(fmt.Sprintf("查询角色失败，%v", err))
+			}
+			addUserInfo.RoleId = roleValue.RoleId // 绑定通用角色
+			addUserInfo.Status = "0"
+			addUserInfo.CreatedAt = time.Now()
+			addUserInfo.UpdatedAt = time.Now()
+			if addUserInfo.Sex == "" {
+				addUserInfo.Sex = "0"
+			}
+			err = orm.Eloquent.Create(&addUserInfo).Error
+			if err != nil {
+				return nil, errors.New(fmt.Sprintf("创建本地用户失败，%v", err))
+			}
+		}
+
 	}
 
 	user, role, e := loginVal.GetUser()

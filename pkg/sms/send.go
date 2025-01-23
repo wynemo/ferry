@@ -14,7 +14,7 @@ import (
 
 const URL = "172.16.100.2:8513"
 
-func sendSMS(phone, messageContent, code string) error {
+func SendSMS(phone, messageContent, code string) error {
 	// Define the SMS gateway URL and query parameters
 	baseURL := "http://%s/sms/Api/Send.do?%s"
 	spCode := "1001"
@@ -81,4 +81,36 @@ func GenerateSMSCode(phone string) (string, error) {
 
 	fmt.Printf("Generated SMS code for %s: %s\n", phone, codeStr)
 	return codeStr, nil
+}
+
+func CheckSMSCode(phone string, inputCode string) (bool, error) {
+	// 从配置中获取 Redis URL，并直接替换掉前缀 "redis://"
+	redisURL := viper.GetString("settings.redis.url")
+	redisAddr := strings.Replace(redisURL, "redis://", "", 1) // 替换前缀
+
+	// 初始化 Redis 客户端
+	client := redis.NewClient(&redis.Options{
+		Addr: redisAddr,
+	})
+
+	// 定义 Redis key
+	redisKey := fmt.Sprintf("sms_%s", phone)
+
+	// 从 Redis 获取存储的验证码
+	storedCode, err := client.Get(redisKey).Result()
+	if err == redis.Nil {
+		// 如果键不存在
+		return false, fmt.Errorf("验证码已过期或不存在")
+	} else if err != nil {
+		// 其他 Redis 错误
+		return false, fmt.Errorf("无法获取验证码: %w", err)
+	}
+
+	// 比较输入的验证码和存储的验证码
+	if storedCode == inputCode {
+		return true, nil
+	}
+
+	// 验证码不匹配
+	return false, fmt.Errorf("验证码错误")
 }
