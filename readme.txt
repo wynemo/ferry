@@ -6,3 +6,9 @@
 
 docker exec -i ferry_mysql mysql -uferry -p123456 ferry < config/db.sql
 docker exec -i ferry_mysql mysql -uferry -p123456 ferry < config/ferry.sql
+
+数据库在mysql/db 文件夹
+前端目录在ferry_web
+
+如果修改了代码，需要重新构建镜像：
+docker compose down && docker rmi ferry:latest || true && docker compose up
