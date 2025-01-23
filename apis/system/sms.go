@@ -23,6 +23,12 @@ func GenerateSMSHandler(c *gin.Context) {
 		return
 	}
 
+	err = sms.SendSMS(phone, "测试", code)
+	if err != nil {
+		app.Error(c, -1, err, fmt.Sprintf("验证码获取失败, %v", err.Error()))
+		return
+	}
+
 	// 返回成功响应
 	app.Custum(c, gin.H{
 		"code":  200,
