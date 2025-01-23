@@ -4,19 +4,19 @@
       <el-collapse-item :title="i18n['conventional']" name="1">
         <img
           data-item="{clazz:'start',size:'30*30',label:''}"
-          :src="require('../assets/flow/start.svg')"
+          :src="require('../assets/flow/start.svg').default"
           style="width:42px;height:42px;margin-top:10px"
         >
         <div>{{ i18n['startEvent'] }}</div>
         <img
           :data-item="userTaskData"
-          :src="require('../assets/flow/user-task.svg')"
+          :src="require('../assets/flow/user-task.svg').default"
           style="width:80px;height:44px;margin-top:10px"
         >
         <div>{{ i18n['userTask'] }}</div>
         <img
           :data-item="handleNodeData"
-          :src="require('../assets/flow/receive-task.svg')"
+          :src="require('../assets/flow/receive-task.svg').default"
           style="width:80px;height:44px;margin-top:10px"
         >
         <div>{{ i18n['handleNode'] }}</div>
@@ -25,7 +25,7 @@
                 <div>{{i18n['scriptTask']}}</div> -->
         <img
           data-item="{clazz:'end',size:'30*30',label:''}"
-          :src="require('../assets/flow/end.svg')"
+          :src="require('../assets/flow/end.svg').default"
           style="width:42px;height:42px;margin-top:10px"
         >
         <div>{{ i18n['endEvent'] }}</div>
@@ -33,13 +33,13 @@
       <el-collapse-item :title="i18n['gateway']" name="3">
         <img
           data-item="{clazz:'exclusiveGateway',size:'40*40',label:''}"
-          :src="require('../assets/flow/exclusive-gateway.svg')"
+          :src="require('../assets/flow/exclusive-gateway.svg').default"
           style="width:48px;height:48px;margin-top:10px"
         >
         <div>{{ i18n['exclusiveGateway'] }}</div>
         <img
           data-item="{clazz:'parallelGateway',size:'40*40',label:''}"
-          :src="require('../assets/flow/parallel-gateway.svg')"
+          :src="require('../assets/flow/parallel-gateway.svg').default"
           style="width:48px;height:48px;margin-top:10px"
         >
         <div>{{ i18n['parallelGateway'] }}</div>
