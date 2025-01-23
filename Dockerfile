@@ -4,7 +4,7 @@ WORKDIR /opt/workflow
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories
 RUN apk update && \
-    apk add --no-cache git && \
+    apk add --no-cache git make gcc g++ python3 && \
     rm -rf /var/cache/apk/* /tmp/* /var/tmp/* $HOME/.cache
 RUN git clone https://github.com/lanyulei/ferry_web
 
@@ -12,10 +12,10 @@ WORKDIR ferry_web
 RUN npm install -g pnpm --registry=https://registry.npmmirror.com
 RUN export NODE_OPTIONS=--openssl-legacy-provider && pnpm install
 RUN echo $'# just a flag\n\
-ENV = \'production\'\n\n\
-# base api\n\
-VUE_APP_BASE_API = \'\''\
-> .env.production
+    ENV = \'production\'\n\n\
+    # base api\n\
+    VUE_APP_BASE_API = \'\''\
+    > .env.production
 RUN export NODE_OPTIONS=--openssl-legacy-provider && pnpm run build:prod
 
 FROM golang:1.22-alpine3.20 AS build
@@ -32,7 +32,7 @@ MAINTAINER lanyulei
 
 RUN echo -e "http://mirrors.aliyun.com/alpine/v3.11/main\nhttp://mirrors.aliyun.com/alpine/v3.11/community" > /etc/apk/repositories \
     && apk add -U tzdata \
-    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime 
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 WORKDIR /opt/workflow/ferry
 
