@@ -12,3 +12,7 @@ docker exec -i ferry_mysql mysql -uferry -p123456 ferry < config/ferry.sql
 
 如果修改了代码，需要重新构建镜像：
 docker compose down && docker rmi ferry:latest || true && docker compose up
+
+前端调试：
+NODE_OPTIONS=--openssl-legacy-provider pnpm run build:prod
+mv web/static/web/* web/
