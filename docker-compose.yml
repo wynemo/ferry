@@ -40,7 +40,7 @@ services:
     volumes:
       - "/etc/localtime:/etc/localtime:ro"
       - "./config:/opt/workflow/ferry/config"
-      # change
+      # 前端调试
       # - "./ferry_web/web/:/opt/workflow/ferry/static/web/"
       # - "./ferry_web/web/index.html:/opt/workflow/ferry/template/web/index.html"
       # default

@@ -14,5 +14,8 @@ docker exec -i ferry_mysql mysql -uferry -p123456 ferry < config/ferry.sql
 docker compose down && docker rmi ferry:latest || true && docker compose up
 
 前端调试：
+cd ferry_web/
+brew install pnpm
+pnpm install
 NODE_OPTIONS=--openssl-legacy-provider pnpm run build:prod
 mv web/static/web/* web/
