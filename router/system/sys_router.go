@@ -22,6 +22,7 @@ func SysNoCheckRoleRouter(r *gin.RouterGroup) {
 
 	v1.GET("/monitor/server", monitor.ServerInfo)
 	v1.GET("/getCaptcha", system.GenerateCaptchaHandler)
+	v1.GET("/getSMS", system.GenerateSMSHandler)
 	v1.GET("/menuTreeselect", system.GetMenuTreeelect)
 	v1.GET("/settings", system.GetSettingsInfo)
 
