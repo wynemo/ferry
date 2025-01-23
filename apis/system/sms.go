@@ -22,17 +22,18 @@ func GenerateSMSHandler(c *gin.Context) {
 		app.Error(c, -1, err, fmt.Sprintf("验证码获取失败, %v", err.Error()))
 		return
 	}
+	fmt.Println("code is", code)
 
-	// err = sms.SendSMS(phone, "测试", code)
-	// if err != nil {
-	// 	app.Error(c, -1, err, fmt.Sprintf("验证码获取失败, %v", err.Error()))
-	// 	return
-	// }
+	err = sms.SendSMS(phone, "测试", code)
+	if err != nil {
+		app.Error(c, -1, err, fmt.Sprintf("验证码获取失败, %v", err.Error()))
+		return
+	}
 
 	// 返回成功响应
 	app.Custum(c, gin.H{
 		"code":  200,
-		"data":  code,
+		"data":  nil,
 		"phone": phone,
 		"msg":   "success",
 	})

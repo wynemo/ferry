@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-const URL = "172.16.100.2:8513"
+const URL = "sms_gateway_demo:8080"
 
 func SendSMS(phone, messageContent, code string) error {
 	// Define the SMS gateway URL and query parameters
@@ -57,8 +57,6 @@ func GenerateSMSCode(phone string) (string, error) {
 	redisURL := viper.GetString("settings.redis.url")
 	redisAddr := strings.Replace(redisURL, "redis://", "", 1) // 替换前缀
 
-	fmt.Println("---------------")
-	fmt.Println(redisAddr)
 	// 初始化 Redis 客户端
 	client := redis.NewClient(&redis.Options{
 		Addr: redisAddr,
