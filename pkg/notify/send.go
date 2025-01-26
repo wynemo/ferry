@@ -6,6 +6,7 @@ import (
 	"ferry/pkg/logger"
 	"ferry/pkg/notify/dingtalk"
 	"ferry/pkg/notify/email"
+	"ferry/pkg/sms"
 	"fmt"
 	"text/template"
 
@@ -90,6 +91,13 @@ func (b *BodyData) SendNotify() (err error) {
 				if dingtalkEnable {
 					url := fmt.Sprintf("%s/#/process/handle-ticket?workOrderId=%d&processId=%d", b.Domain, b.Id, b.ProcessId)
 					go dingtalk.SendDingMsg(phoneList, url, b.Title, b.Creator, b.PriorityValue, b.CreatedAt)
+				}
+				phoneEnable := viper.GetBool("settings.phone.enable")
+				if phoneEnable {
+					for index, phone := range phoneList {
+						fmt.Printf("Phone #%d: %s\n", index+1, phone)
+						go sms.SendSMS(phone, b.Title, b.Creator)
+					}
 				}
 			}
 		}
