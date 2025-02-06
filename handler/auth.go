@@ -160,33 +160,16 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 			return nil, errors.New("验证码错误")
 		}
 
+		var user system.SysUser
 		err = orm.Eloquent.Model(&system.SysUser{}).
-			Where("username = ?", loginVal.Username).
-			Count(&authUserCount).Error
+			Where("phone = ?", loginVal.Username).
+			Find(&user).Count(&authUserCount).Error
 		if err != nil {
+			fmt.Println("查询用户失败:", err)
 			return nil, errors.New(fmt.Sprintf("查询用户失败，%v", err))
 		}
-
-		if authUserCount == 0 {
-			addUserInfo.Username = loginVal.Username
-			// 获取默认权限ID
-			err = orm.Eloquent.Model(&system.SysRole{}).Where("role_key = 'common'").Find(&roleValue).Error
-			if err != nil {
-				return nil, errors.New(fmt.Sprintf("查询角色失败，%v", err))
-			}
-			addUserInfo.RoleId = roleValue.RoleId // 绑定通用角色
-			addUserInfo.Status = "0"
-			addUserInfo.CreatedAt = time.Now()
-			addUserInfo.UpdatedAt = time.Now()
-			if addUserInfo.Sex == "" {
-				addUserInfo.Sex = "0"
-			}
-			err = orm.Eloquent.Create(&addUserInfo).Error
-			if err != nil {
-				return nil, errors.New(fmt.Sprintf("创建本地用户失败，%v", err))
-			}
-		}
-
+		loginVal.Username = user.Username
+		fmt.Println("用户信息:", user.Username, user.Phone)
 	}
 
 	user, role, e := loginVal.GetUser()
@@ -199,6 +182,7 @@ func Authenticator(c *gin.Context) (interface{}, error) {
 
 		return map[string]interface{}{"user": user, "role": role}, nil
 	} else {
+		fmt.Println("获取用户信息失败:", e)
 		loginLog.Status = "1"
 		loginLog.Msg = "登录失败"
 		_, _ = loginLog.Create()
